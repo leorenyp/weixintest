@@ -117,7 +117,7 @@ public class MessageHandlerUtil {
         String content = map.get("Content");
         switch (content) {
             case "文本":
-                String msgText = "测试最简单的文本消息！！！\n" ;
+                String msgText = "测试最简单的文本!!!!\n" ;
                 responseMessage = buildTextMessage(map, msgText);
                 break;
             case "图片":
@@ -137,8 +137,8 @@ public class MessageHandlerUtil {
                 Music music = new Music();
                 music.title = "赵丽颖、许志安 - 乱世俱灭";
                 music.description = "电视剧《蜀山战纪》插曲";
-                music.musicUrl = "http://gacl.ngrok.natapp.cn/media/music/music.mp3";
-                music.hqMusicUrl = "http://gacl.ngrok.natapp.cn/media/music/music.mp3";
+                music.musicUrl = "http://ryp.ngrok.natapp.cn/weixintest/media/music/music.mp3";
+                music.hqMusicUrl = "http://ryp.ngrok.natapp.cn/weixintest/media/music/music.mp3";
                 responseMessage = buildMusicMessage(map, music);
                 break;
             case "视频":
@@ -147,6 +147,9 @@ public class MessageHandlerUtil {
                 video.title = "小苹果";
                 video.description = "小苹果搞笑视频";
                 responseMessage = buildVideoMessage(map, video);
+                break;
+            case "红包":
+            	responseMessage = buildRedPacketMessage(map);
                 break;
             default:
                 responseMessage = buildWelcomeTextMessage(map);
@@ -428,6 +431,37 @@ public class MessageHandlerUtil {
 
     }
 
+    
+    /**
+     * 构造图文消息(红包)
+     * @param map 封装了解析结果的Map
+     * @return 图文消息XML字符串
+     */
+    private static String buildRedPacketMessage(Map<String, String> map) {
+        String fromUserName = map.get("FromUserName");
+        // 开发者微信号
+        String toUserName = map.get("ToUserName");
+        NewsItem item = new NewsItem();
+        item.Title = "红包来了！！！！！！！！";
+        item.Description = "红包来了！！！！！！！！\n" ;
+        item.PicUrl = "http://ryp.ngrok.natapp.cn/weixintest/img/packet.png";
+        item.Url = "http://ryp.ngrok.natapp.cn/weixintest/redpacket.html";
+        String itemContent1 = buildSingleItem(item);
+
+
+
+        String content = String.format("<xml>\n" +
+                "<ToUserName><![CDATA[%s]]></ToUserName>\n" +
+                "<FromUserName><![CDATA[%s]]></FromUserName>\n" +
+                "<CreateTime>%s</CreateTime>\n" +
+                "<MsgType><![CDATA[news]]></MsgType>\n" +
+                "<ArticleCount>%s</ArticleCount>\n" +
+                "<Articles>\n" + "%s" +
+                "</Articles>\n" +
+                "</xml> ", fromUserName, toUserName, getMessageCreateTime(), 1, itemContent1);
+        return content;
+
+    }
     /**
      * 生成图文消息的一条记录
      *
